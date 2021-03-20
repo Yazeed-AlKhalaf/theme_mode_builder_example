@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:theme_mode_builder/theme_mode_builder.dart';
 
 class ThemeModeBuilderExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Home(),
+    return ThemeModeBuilder(
+      builder: (
+        BuildContext context,
+        ThemeMode themeMode,
+      ) {
+        return MaterialApp(
+          themeMode: themeMode,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            primarySwatch: Colors.red,
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            primarySwatch: Colors.deepPurple,
+          ),
+          home: Home(),
+        );
+      },
     );
   }
 }
@@ -28,7 +45,7 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              "Current Mode: Light",
+              "Current Mode: ${ThemeModeBuilderConfig.isDarkTheme() ? "Dark" : "Light"}",
               style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
@@ -39,7 +56,9 @@ class _HomeState extends State<Home> {
               child: Text(
                 "Toggle Mode",
               ),
-              onPressed: () {},
+              onPressed: () async {
+                await ThemeModeBuilderConfig.toggleTheme();
+              },
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -49,14 +68,22 @@ class _HomeState extends State<Home> {
                   label: Text(
                     "Light Mode",
                   ),
-                  onPressed: () {},
+                  onPressed: ThemeModeBuilderConfig.isDarkTheme()
+                      ? () async {
+                          await ThemeModeBuilderConfig.toggleTheme();
+                        }
+                      : () {},
                 ),
                 ElevatedButton.icon(
                   icon: Icon(Icons.lightbulb_outline),
                   label: Text(
                     "Dark Mode",
                   ),
-                  onPressed: () {},
+                  onPressed: ThemeModeBuilderConfig.isDarkTheme()
+                      ? () {}
+                      : () async {
+                          await ThemeModeBuilderConfig.toggleTheme();
+                        },
                 ),
               ],
             ),
